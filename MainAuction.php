@@ -6,7 +6,6 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "DBAutoAuk";
-=======
 include("./include/db_connect.php"); 
 
 // Перевірка, чи встановлено номер сторінки
@@ -27,10 +26,6 @@ if ($conn->connect_error) {
     die("З'єднання не вдалося: " . $conn->connect_error);
 }
 
-// SQL-запит для отримання даних для поточної сторінки
-$sql = "
-SELECT 
-=======
 // SQL-запит для отримання даних для поточної сторінки
 $sql = "
 SELECT 
@@ -57,7 +52,6 @@ $result = $conn->query($sql);
 // SQL-запит для обчислення загальної кількості сторінок
 $total_pages_sql = "SELECT COUNT(*) FROM Auction";
 $result_total = $conn->query($total_pages_sql);
-=======
 $result = $mysqli->query($sql);
 
 // SQL-запит для обчислення загальної кількості сторінок
@@ -66,8 +60,6 @@ $result_total = $mysqli->query($total_pages_sql);
 $total_rows = $result_total->fetch_array()[0];
 $total_pages = ceil($total_rows / $per_page);
 ?>
-
-
 
 
 <!DOCTYPE html>
