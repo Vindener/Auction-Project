@@ -70,11 +70,7 @@ $user = $stmt->fetch();
                     </li>
                     <li class="rd-nav-item"><a class="rd-nav-link" href="MainAuction.php">Аукціони</a>
                     </li>
-
-                    <li class="rd-nav-item"><a class="rd-nav-link" href="autorization.php">Вихій</a>
-                    </li>
-                    <li class="rd-nav-item"><a class="rd-nav-link" href="AdminPanel.php">Адмінка</a>
-
+                    <li class="rd-nav-item"><a class="rd-nav-link" href="account.php">Акаунт</a>
                     </li>                  
                   </ul>
                 </div>
@@ -112,13 +108,9 @@ $user = $stmt->fetch();
                <li>Побатькові: <?php echo htmlspecialchars($user['CPobatkovi']); ?></li>
                <li>Електронна пошта: <?php echo htmlspecialchars($user['ClientEmile']); ?></li>
               </ul>
-              <p>якщо ви хочети змінити данні то натисніть на кнопку "Змінити облікові данні"</p>
-              <h3>⠀ </h3>
-              <div class="wow-outer">
-            <button onclick="window.location.href='dataChange.php'" type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft">
-                <span class=""></span>Змінити облікові данні
-            </button>           
-            </div>
+              
+      
+              
           </div>
         </div>
       </section>
@@ -129,7 +121,7 @@ $user = $stmt->fetch();
             <div class="col-xl-8">
               <ul class="list-xl">
                 <li>
-                  <h2>Аукціони в яких ви приймали участь</h2>  
+                  <h2>Додати марку</h2>  
                   <div class="wow-outer">
             <button onclick="window.location.href='dataChange.php'" type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft">
                 <span class=""></span>Переглянути історію аукціонів
@@ -137,7 +129,7 @@ $user = $stmt->fetch();
             </div>              
                 </li>
                 <li>
-                  <h2>Переглянути власні аукціони</h2>
+                  <h2>Додати Модель</h2>
                   <div class="wow-outer">
             <button onclick="window.location.href='youAuction.php'" type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft">
                 <span class=""></span>Переглянути аукціон
@@ -145,7 +137,7 @@ $user = $stmt->fetch();
             </div>
                 </li> 
                 <li>
-                  <h2>Додати Аукціон</h2>
+                  <h2>Редагувати аукціон</h2>
                   <div class="wow-outer">
             <button onclick="window.location.href='choosingCarForTheAuction.php'" type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft">
                 <span class=""></span>Провести аукціон
@@ -153,7 +145,7 @@ $user = $stmt->fetch();
             </div>
                 </li>  
                 <li>
-                  <h2>Переглянути Машини</h2>
+                  <h2>Редагувати  Машини</h2>
                   <div class="wow-outer">
             <button onclick="window.location.href='youCar.php'" type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft">
                 <span class=""></span>Переглянути

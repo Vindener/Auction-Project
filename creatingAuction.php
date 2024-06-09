@@ -1,12 +1,39 @@
 <?php
-session_start(); // Запускаємо сесію
+session_start();
 
-// Знищуємо всі змінні сесії
-session_unset();
+// Підключення до бази даних
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "DBAutoAuk";
 
-// Знищуємо сесію
-session_destroy();
+// Створення підключення
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Перевірка підключення
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Отримання IDCar з URL
+$IDCar = isset($_GET['IDCar']) ? $_GET['IDCar'] : 0;
+
+// SQL запит для отримання CarPhoto
+$sql = "SELECT CarPhoto FROM Car WHERE IDCar = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $IDCar);
+$stmt->execute();
+$stmt->bind_result($CarPhoto);
+$stmt->fetch();
+$stmt->close();
+$conn->close();
+
+// Перевірка, чи знайдено фото
+if (!$CarPhoto) {
+    $CarPhoto = "default_photo.jpg"; // Шлях до фото за замовчуванням, якщо не знайдено фото для IDCar
+}
 ?>
+
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="en">
   <head>
@@ -21,21 +48,11 @@ session_destroy();
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/fonts.css">
     <link rel="stylesheet" href="css/style.css" id="main-styles-link">
+    
     <style>.ie-panel{display: none;background: #212121;padding: 10px 0;box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3);clear: both;text-align:center;position: relative;z-index: 1;} html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {display: block;}</style>
   </head>
   <body>
-    <!-- 
-    <div class="ie-panel"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
-    <div class="preloader">
-      <div class="preloader-logo"><img src="images/logo-default-151x44.png" alt="" width="151" height="44" srcset="images/logo-default-151x44.png 2x"/>
-      </div>
-      <div class="preloader-body">
-        <div id="loadingProgressG">
-          <div class="loadingProgressG" id="loadingProgressG_1"></div>
-        </div>
-      </div>
-    </div>
-    <div class="page">-->
+   
       <!-- Page Header-->
       <header class="section novi-background page-header">
         <!-- RD Navbar-->
@@ -80,11 +97,11 @@ session_destroy();
         <div class="breadcrumbs-custom-inner">
           <div class="container breadcrumbs-custom-container">
             <div class="breadcrumbs-custom-main">
-              <h6 class="breadcrumbs-custom-subtitle title-decorated">Contacts</h6>
-              <h2 class="text-uppercase breadcrumbs-custom-title">Ласкаво просимо до вікна реєстрації</h2>
+              <h6 class="breadcrumbs-custom-subtitle title-decorated"></h6>
+              <h2 class="text-uppercase breadcrumbs-custom-title">Вітаю в формі створення аукціону</h2>
             </div>
             <ul class="breadcrumbs-custom-path">
-              <li><a href="index.html">Home</a></li>
+              <li><a href="index.php">Home</a></li>
               <li class="active">Contacts</li>
             </ul>
           </div>
@@ -97,77 +114,70 @@ session_destroy();
                 <div class="row justify-content-center">
                     <div class="col-lg-9 cell-inner">
                         <div class="section-lg">
-                            <h3 class="text-uppercase wow-outer"><span class="wow slideInDown">Реєстрація</span></h3>
-                            <!-- RD Mailform-->
-    <form  action="../bat/reg.php"  method="POST" >
-    <div class="row row-10">
-        <div class="col-md-6 wow-outer">
-            <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-login">Логін</label>
-                <input class="form-input" id="contact-login" type="text" name="username" data-constraints="@Required">
+                            <h3 class="text-uppercase wow-outer"><span class="wow slideInDown">Додати новий аукціон</span></h3>
+                            <!-- RD Mailform-->                           
+                            <form action="../bat/addAuction.php?IDCar=<?php echo $_GET['IDCar']; ?>" method="POST" enctype="multipart/form-data">
+        <section class="section novi-background section-lg">
+            <div class="container">
+                <div class="row row-50 justify-content-center justify-content-lg-between flex-lg-row-reverse">
+                    <div class="col-md-10 col-lg-6 col-xl-5">
+                    </div>
+                    <div class="col-md-10 col-lg-6 col-xl-6">
+                        <img id="uploaded-image" class="img-responsive" src="<?php echo htmlspecialchars($CarPhoto); ?>" alt="Car Photo" width="570" height="388"/>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-6 wow-outer">
-            <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-password">Пароль</label>
+        </section>
+    
 
-                <input class="form-input" id="contact-password" type="password" name="password" data-constraints="@Required">
-            </div>
-        </div>
+
+<script>
+function loadFile(event) {
+    var image = document.getElementById('uploaded-image');
+    image.src = URL.createObjectURL(event.target.files[0]);
+    image.onload = function() {
+        URL.revokeObjectURL(image.src); // release memory
+    }
+}
+</script>
+        
+        <div class="row row-10">
         <div class="col-md-6 wow-outer">
             <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-email">E-mail</label>
-                <input class="form-input" id="contact-email" type="email" name="email" data-constraints="@Email @Required">
+                <label class="form-label-outside" for="contact-login">Старт аукціонку</label>
+                <input class="form-input" id="contact-login" type="datetime-local" name="StartAuK" data-constraints="@Required">
             </div>
-        </div>
+        </div>  
+    
         <div class="col-md-6 wow-outer">
             <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-phone">Телефон</label>
-                <input class="form-input" id="contact-phone" type="text" name="phone" data-constraints="@PhoneNumber">
+                <label class="form-label-outside" for="contact-password">Кінець аукціону</label>
+                <input class="form-input" id="contact-password" type="datetime-local" name="EndAuk" data-constraints="@Required">
             </div>
-        </div>
+        </div>  
         <div class="col-md-6 wow-outer">
             <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-name">Ім'я</label>
-                <input class="form-input" id="contact-name" type="text" name="CName" data-constraints="@Required">
-            </div>
-        </div>
-        <div class="col-md-6 wow-outer">
-            <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-last-name">Фамілія</label>
-                <input class="form-input" id="contact-last-name" type="text" name="CFamilia" data-constraints="@Required">
-            </div>
-        </div>
-        <div class="col-md-6 wow-outer">
-            <div class="form-wrap wow fadeSlideInUp">
-                <label class="form-label-outside" for="contact-batkovi">По батькові</label>
-                <input class="form-input" id="contact-batkovi" type="text" name="CPobatkovi" data-constraints="@Required">
-            </div>
-        </div>
+                <label class="form-label-outside" for="contact-phone">мінімальна ставка</label>
+                <input class="form-input" id="contact-phone" type="number" name="MinBet" data-constraints="@Required">
+            </div>     
+    </div>
     </div>
     <div class="group group-middle">
 
         <div class="wow-outer">
-            <button type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft" action="../bat/reg.php">
-                <span class=""></span>Зареєструватись
-            </button>
-        </div>
+        <button class="button button-primary button-winona wow slideInRight" type="submit">
+      <span class=""></span>Додати аукціон
+         </button>        
+        </div>   
     </div>
-</form>                 
+</form>     
+      </section>               
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-    
-
-
-
-
-
-
-
       <!-- Page Footer-->
       <footer class="section novi-background footer-advanced bg-gray-700">
         <div class="footer-advanced-main">

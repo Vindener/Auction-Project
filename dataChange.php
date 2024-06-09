@@ -1,79 +1,11 @@
-
-<?php 
-session_start();
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "DBAutoAuk";
-=======
-include("./include/db_connect.php"); 
-
-// Перевірка, чи встановлено номер сторінки
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-
-// Кількість аукціонів на одній сторінці
-$per_page = 20;
-
-// Обчислення початкового рядка для SQL LIMIT
-$start = ($page - 1) * $per_page;
-
-
-// Створення з'єднання
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Перевірка з'єднання
-if ($conn->connect_error) {
-    die("З'єднання не вдалося: " . $conn->connect_error);
-}
-
-// SQL-запит для отримання даних для поточної сторінки
-$sql = "
-SELECT 
-=======
-// SQL-запит для отримання даних для поточної сторінки
-$sql = "
-SELECT 
-    a.IDAuction, 
-    a.StartAuction, 
-    a.EndAuction, 
-    a.MinPrice, 
-    b.Brand, 
-    m.Model,
-    c.CarPhoto
-FROM 
-    Auction a
-JOIN 
-    Car c ON a.AuctionIDCar = c.IDCar
-JOIN 
-    Brand b ON c.CarBrand = b.IDBrand
-JOIN 
-    Model m ON c.CarModel = m.IDModel
-LIMIT $start, $per_page;
-";
-
-$result = $conn->query($sql);
-
-// SQL-запит для обчислення загальної кількості сторінок
-$total_pages_sql = "SELECT COUNT(*) FROM Auction";
-$result_total = $conn->query($total_pages_sql);
-=======
-$result = $mysqli->query($sql);
-
-// SQL-запит для обчислення загальної кількості сторінок
-$total_pages_sql = "SELECT COUNT(*) FROM Auction";
-$result_total = $mysqli->query($total_pages_sql);
-$total_rows = $result_total->fetch_array()[0];
-$total_pages = ceil($total_rows / $per_page);
+<?php
+session_start(); 
 ?>
-
-
-
-
 <!DOCTYPE html>
 <html class="wide wow-animation" lang="en">
   <head>
-    <title>Home</title>
+    <title>Contacts</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width height=device-height initial-scale=1.0 maximum-scale=1.0 user-scalable=0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -86,10 +18,10 @@ $total_pages = ceil($total_rows / $per_page);
     <style>.ie-panel{display: none;background: #212121;padding: 10px 0;box-shadow: 3px 3px 5px 0 rgba(0,0,0,.3);clear: both;text-align:center;position: relative;z-index: 1;} html.ie-10 .ie-panel, html.lt-ie-10 .ie-panel {display: block;}</style>
   </head>
   <body>
-    <!--
+    <!-- 
     <div class="ie-panel"><a href="http://windows.microsoft.com/en-US/internet-explorer/"><img src="images/ie8-panel/warning_bar_0000_us.jpg" height="42" width="820" alt="You are using an outdated browser. For a faster, safer browsing experience, upgrade for free today."></a></div>
     <div class="preloader">
-      <div class="preloader-logo"><img src="images/Mylogo-default-151x44.png" alt="" width="151" height="44" srcset="images/Mylogo-default-151x44.png 2x"/>
+      <div class="preloader-logo"><img src="images/logo-default-151x44.png" alt="" width="151" height="44" srcset="images/logo-default-151x44.png 2x"/>
       </div>
       <div class="preloader-body">
         <div id="loadingProgressG">
@@ -98,7 +30,7 @@ $total_pages = ceil($total_rows / $per_page);
       </div>
     </div>
     <div class="page">-->
-     
+      <!-- Page Header-->
       <header class="section novi-background page-header">
         <!-- RD Navbar-->
         <div class="rd-navbar-wrap">
@@ -109,7 +41,7 @@ $total_pages = ceil($total_rows / $per_page);
                 <div class="rd-navbar-panel">
                   <!-- RD Navbar Toggle-->
                   <button class="rd-navbar-toggle" data-rd-navbar-toggle="#rd-navbar-nav-wrap-1"><span></span></button>
-                  <!-- RD Navbar Brand--><a class="rd-navbar-brand" href="index.html"><img src="images/Mylogo-default-151x44.png" alt="" width="151" height="44" srcset="images/Mylogo-default-151x44.png 2x"/></a>
+                  <!-- RD Navbar Brand--><a class="rd-navbar-brand" href="index.php"><img src="images/Mylogo-default-151x44.png" alt="" width="151" height="44" srcset="images/Mylogo-default-151x44.png 2x"/></a>
                 </div>
                 <div class="rd-navbar-collapse">
                   <button class="rd-navbar-collapse-toggle rd-navbar-fixed-element-1" data-rd-navbar-toggle="#rd-navbar-collapse-content-1"><span></span></button>
@@ -137,13 +69,13 @@ $total_pages = ceil($total_rows / $per_page);
           </nav>
         </div>
       </header>
-
+      <!-- Breadcrumbs -->
       <section class="section novi-background breadcrumbs-custom bg-image context-dark" style="background-image: url(images/registr.jpg);">
         <div class="breadcrumbs-custom-inner">
           <div class="container breadcrumbs-custom-container">
             <div class="breadcrumbs-custom-main">
-              <h6 class="breadcrumbs-custom-subtitle title-decorated">текст</h6>
-              <h2 class="text-uppercase breadcrumbs-custom-title">Ласкаво просимо до вікна пошуку аукціона</h2>
+              <h6 class="breadcrumbs-custom-subtitle title-decorated">Contacts</h6>
+              <h2 class="text-uppercase breadcrumbs-custom-title">Ласкаво просимо до вікна Зміни данних</h2>
             </div>
             <ul class="breadcrumbs-custom-path">
               <li><a href="index.html">Home</a></li>
@@ -152,71 +84,84 @@ $total_pages = ceil($total_rows / $per_page);
           </div>
         </div>
       </section>
-
-      <!-- Services-->
-      <section class="section novi-background section-lg text-center">
-    <div class="container">
-        <h3 class="text-uppercase">Хороші варіанти :</h3>
-        <div class="row row-35 row-xxl-70 offset-top-2">
-            <?php
-            if ($result->num_rows > 0) {
-                // Виведення даних кожного рядка
-                while($row = $result->fetch_assoc()) {
-                    echo '<div class="col-sm-6 col-lg-3">';
-                    echo '  <article class="thumbnail-light">';
-                    echo '      <a class="thumbnail-light-media" href="Auction.php?IDAuction='.$row["IDAuction"] .'"><img class="thumbnail-light-image" src="'. $row["CarPhoto"] .'" alt="" style="max-width: 270px; max-height: 220px;"/></a>';
-                    echo '      <h4 class="thumbnail-light-title"><a href="Auction.php?IDAuction='.$row["IDAuction"] .'">'. $row["Brand"] .' '. $row["Model"] .'</a></h4>';
-                    echo '      <p>Початок аукціону: '. $row["StartAuction"] .'</p>';
-                    echo '      <p>Кінець аукціону: '. $row["EndAuction"] .'</p>';
-                    echo '      <p>Мінімальна ставка: '. $row["MinPrice"] .'</p>';
-                    echo '  </article>';
-                    echo '</div>';
-                }
-            } else {
-                echo "Немає доступних аукціонів.";
-            }
-            $conn->close();
-            ?>
+      
+      <section class="section novi-background bg-gray-100 centered-section">
+        <div class="range justify-content-xl-center">
+            <div class="cell-xl-6 align-self-center container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-9 cell-inner">
+                        <div class="section-lg">
+                            <h3 class="text-uppercase wow-outer"><span class="wow slideInDown">Змінити данні</span></h3>
+                            <!-- RD Mailform-->
+    <form  action="../bat/data-Change.php"  method="POST" >
+    <div class="row row-10">
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-login">Логін</label>
+                <input class="form-input" id="contact-login" type="text" name="username" data-constraints="@Required">
+            </div>
         </div>
-        <!-- Пагінація -->
-        <div class="row">
-            <div class="col-12">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <?php
-                        // Виведення кнопок пагінації
-                        $page_range = 3;
-                        $start_page = max(1, $page - $page_range);
-                        $end_page = min($total_pages, $page + $page_range);
-
-                        if ($page > 4) {
-                            echo '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
-                            if ($page > 5) {
-                                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                            }
-                        }
-
-                        for ($i = $start_page; $i <= $end_page; $i++) {
-                            echo '<li class="page-item';
-                            if ($page == $i) {
-                                echo ' active';
-                            }
-                            echo '"><a class="page-link" href="?page='.$i.'">'.$i.'</a></li>';
-                        }
-
-                        if ($end_page < $total_pages - 3) {
-                            if ($end_page < $total_pages - 4) {
-                                echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                            }
-                            echo '<li class="page-item"><a class="page-link" href="?page='.$total_pages.'">'.$total_pages.'</a></li>';
-                        }
-                        ?>
-                    </ul>
-                </nav>
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-password">Пароль</label>
+                <input class="form-input" id="contact-password" type="text" name="password" data-constraints="@Required">
+            </div>
+        </div>
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-email">E-mail</label>
+                <input class="form-input" id="contact-email" type="email" name="email" data-constraints="@Email @Required">
+            </div>
+        </div>
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-phone">Телефон</label>
+                <input class="form-input" id="contact-phone" type="text" name="phone" data-constraints="@PhoneNumber">
+            </div>
+        </div>
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-name">Ім'я</label>
+                <input class="form-input" id="contact-name" type="text" name="CName" data-constraints="@Required">
+            </div>
+        </div>
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-last-name">Фамілія</label>
+                <input class="form-input" id="contact-last-name" type="text" name="CFamilia" data-constraints="@Required">
+            </div>
+        </div>
+        <div class="col-md-6 wow-outer">
+            <div class="form-wrap wow fadeSlideInUp">
+                <label class="form-label-outside" for="contact-batkovi">По батькові</label>
+                <input class="form-input" id="contact-batkovi" type="text" name="CPobatkovi" data-constraints="@Required">
             </div>
         </div>
     </div>
-</section>
+    <div class="group group-middle">
+
+        <div class="wow-outer">
+            <button type="submit" id="register-button" class="button button-primary-outline button-icon button-icon-left button-winona wow slideInLeft" action="../bat/data-Change.php">
+                <span class=""></span>Змінити 
+            </button>
+        </div>
+    </div>
+</form>                 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+
+
+
+
+
+
+
+      <!-- Page Footer-->
       <footer class="section novi-background footer-advanced bg-gray-700">
         <div class="footer-advanced-main">        
           </div>

@@ -1,42 +1,78 @@
 <?php
-session_start(); // Розпочати сесію
-
-// Параметри підключення до бази даних
-$servername = "localhost"; // Ім'я сервера
-$username = "root"; // Ім'я користувача бази даних
-$password = ""; // Пароль користувача бази даних
-$dbname = "DBAutoAuk"; // Ім'я бази даних
+// Стартуємо сесію для отримання AuctionIDClient
+session_start();
 
 // Підключення до бази даних
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "DBAutoAuk";
+
+// Створення підключення
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Перевірка підключення
 if ($conn->connect_error) {
-    die("Помилка підключення до бази даних: " . $conn->connect_error);
+    die("Підключення до бази даних не вдалося: " . $conn->connect_error);
 }
 
-// Отримання ідентифікатора користувача з сесії
-$CarIDClient = $_SESSION['user_id'];
+// Отримання AuctionIDClient з сесії
+if (isset($_SESSION['user_id'])) {
+    $AuctionIDClient = $_SESSION['user_id'];
+  
+} else {
+    die("AuctionIDClient не знайдено у сесії.");
+}
 
-// SQL запит для отримання машин користувача
-$sql = "SELECT Car.*, Model.Model AS ModelName FROM Car 
-        JOIN Model ON Car.CarModel = Model.IDModel 
-        WHERE Car.CarIDClient = ?";
+// SQL-запит для отримання даних машин та відповідних аукціонів
+$sql = "
+    SELECT 
+        Car.CarPhoto AS CarPhoto, 
+        Model.Model AS ModelName, 
+        Car.Probig AS Probig, 
+        Car.EngineСapacity AS EngineСapacity, 
+        Car.Year AS Year, 
+        Car.Description AS Description, 
+        Car.IDCar AS IDCar,
+        Auction.StartAuction, 
+        Auction.EndAuction, 
+        Auction.MinPrice
+    FROM 
+        Auction
+    JOIN 
+        Car ON Auction.AuctionIDCar = Car.IDCar
+    JOIN 
+        Model ON Car.CarModel = Model.IDModel
+    WHERE 
+        Auction.AuctionIDClient = ?
+";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $CarIDClient);
+
+// Перевірка, чи був запит успішно підготовлений
+if (!$stmt) {
+    die("Помилка підготовки запиту: " . $conn->error);
+}
+
+$stmt->bind_param("i", $AuctionIDClient);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$cars = [];
-while ($row = $result->fetch_assoc()) {
-    $cars[] = $row;
+// Перевірка, чи є результати
+if ($result->num_rows > 0) {
+   
+    // Отримуємо дані у вигляді асоціативного масиву
+    $cars = $result->fetch_all(MYSQLI_ASSOC);
+} else {
+    echo "Немає результатів для AuctionIDClient: " . htmlspecialchars($AuctionIDClient);
 }
 
-// Закриття підготовленого виразу та підключення до бази даних
+// Закриваємо з'єднання
 $stmt->close();
 $conn->close();
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -79,7 +115,7 @@ $conn->close();
                 <div class="rd-navbar-panel">
                   <!-- RD Navbar Toggle-->
                   <button class="rd-navbar-toggle" data-rd-navbar-toggle="#rd-navbar-nav-wrap-1"><span></span></button>
-                  <!-- RD Navbar Brand--><a class="rd-navbar-brand" href="index.php"><img src="images/background.jpg" alt="" width="151" height="44" srcset="images/Mylogo-default-151x44.png 2x"/></a>
+                  <!-- RD Navbar Brand--><a class="rd-navbar-brand" href="index.php"><img src="images/Mylogo-default-151x44.png" alt="" width="151" height="44" srcset="images/Mylogo-default-151x44.png 2x"/></a>
                 </div>
                 <div class="rd-navbar-collapse">
                   <button class="rd-navbar-collapse-toggle rd-navbar-fixed-element-1" data-rd-navbar-toggle="#rd-navbar-collapse-content-1"><span></span></button>
@@ -107,9 +143,7 @@ $conn->close();
           </nav>
         </div>
       </header>
-
-      <section class="section novi-background breadcrumbs-custom bg-image context-dark" style="background-image: url(background.jpg89);">
-
+      <section class="section novi-background breadcrumbs-custom bg-image context-dark" style="background-image: url(images/background.jpg);">
         <div class="breadcrumbs-custom-inner">
           <div class="container breadcrumbs-custom-container">
             <div class="breadcrumbs-custom-main">
@@ -133,7 +167,15 @@ $conn->close();
       
       <div class="container">
   <div class="row">
-    <?php foreach ($cars as $car): ?>
+    <?php if (!empty($cars)) {
+        foreach ($cars as $car): 
+        $currentDate = new DateTime();
+        $startAuction = new DateTime($car['StartAuction']);
+        $endAuction = new DateTime($car['EndAuction']);
+        $isActive = $currentDate >= $startAuction && $currentDate <= $endAuction;
+        $statusText = $isActive ? 'Активний' : 'Неактивний';
+        $statusColor = $isActive ? 'green' : 'red';
+    ?>
       <div class="col-md-6 wow-outer">
         <!-- Post Modern -->
         <article class="post-modern wow slideInLeft">
@@ -151,7 +193,7 @@ $conn->close();
              data-privod="<?php echo htmlspecialchars($car['Privod']); ?>"
              data-transmission="<?php echo htmlspecialchars($car['Transmission']); ?>"
              data-typebody="<?php echo htmlspecialchars($car['TypeBody']); ?>">
-            <img src="<?php echo htmlspecialchars($car['CarPhoto']); ?>" alt="<?php echo htmlspecialchars($car['CarModel']); ?>" width="571" height="353"/>
+            <img src="<?php echo htmlspecialchars($car['CarPhoto']); ?>" alt="<?php echo htmlspecialchars($car['ModelName']); ?>" width="570" height="352" />
           </a>
           <h4 class="post-modern-title">
             <a class="post-modern-title" href="#"><?php echo htmlspecialchars($car['ModelName']); ?></a>
@@ -162,105 +204,26 @@ $conn->close();
             <li><?php echo htmlspecialchars($car['Year']); echo " рік"; ?></li>
           </ul>
           <p><?php echo "опис :"; echo htmlspecialchars($car['Description']); ?></p>
+          <ul class="post-modern-meta">
+            <li>Початок аукціону: <?php echo htmlspecialchars($car['StartAuction']); ?></li>
+            <li>Кінець аукціону: <?php echo htmlspecialchars($car['EndAuction']); ?></li>
+            <li>Мінімальна ставка: <?php echo htmlspecialchars($car['MinPrice']); ?></li>
+            <li style="color: <?php echo $statusColor; ?>;"><?php echo $statusText; ?></li>
+          </ul>
         </article>
       </div>
-    <?php endforeach; ?>
+    <?php endforeach;
+    } else {
+        echo "Немає машин для відображення.";
+    } ?>
   </div>
 </div>
 
  <!-- Modal -->
-<div class="modal fade" id="carModal" tabindex="-1" role="dialog" aria-labelledby="carModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="carModalLabel">Опис автомобіля</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Контент модального вікна буде динамічно змінюватись за допомогою JavaScript -->
-                <img id="modalCarPhoto" src="" alt="Фото автомобіля"  class="img-fluid mb-3">
-                <h4 id="modalCarModel"></h4>
-                <ul>
-                    <li>Пробіг: <span id="modalCarProbig"></span></li>
-                    <li>Об'єм двигуна: <span id="modalCarEngineСapacity"></span></li>
-                    <li>Рік: <span id="modalCarYear"></span></li>
-                    <li>Опис: <span id="modalCarDescription"></span></li>
-                    <li>Номер кузова: <span id="modalCarVin"></span></li>
-                    <li>Витрати палива: <span id="modalCarFuelCosts"></span></li>
-                    <li>Тип палива: <span id="modalCarFuelType"></span></li>
-                    <li>Привід: <span id="modalCarPrivod"></span></li>
-                    <li>Тип коробки передач: <span id="modalCarTransmission"></span></li>
-                    <li>Тип кузова: <span id="modalCarTypeBody"></span></li>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрити</button>
-                <button type="button" class="btn btn-primary" id="editCarButton">Редагувати</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Підключення jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
-<!-- Підключення Bootstrap JS -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-<!-- JavaScript код для заповнення модального вікна -->
-<script>
-    $(document).ready(function() {
-        var carID;
-
-        $('#carModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget); // Кнопка, що відкрила модальне вікно
-            var photo = button.data('photo');
-            var model = button.data('model');
-            var probig = button.data('probig');
-            var engine = button.data('engine');
-            var year = button.data('year');
-            var description = button.data('description');
-            var vin = button.data('vin');
-            var fuelCosts = button.data('fuelcosts');
-            var fuelType = button.data('fueltype');
-            var privod = button.data('privod');
-            var transmission = button.data('transmission');
-            var typeBody = button.data('typebody');
-            var id = button.data('idcar');
-            carID = id;
-
-            var modal = $(this);
-            modal.find('#modalCarPhoto').attr('src', photo);
-            modal.find('#modalCarModel').text(model);
-            modal.find('#modalCarProbig').text(probig);
-            modal.find('#modalCarEngineСapacity').text(engine);
-            modal.find('#modalCarYear').text(year);
-            modal.find('#modalCarDescription').text(description);
-            modal.find('#modalCarVin').text(vin);
-            modal.find('#modalCarFuelCosts').text(fuelCosts);
-            modal.find('#modalCarFuelType').text(fuelType);
-            modal.find('#modalCarPrivod').text(privod);
-            modal.find('#modalCarTransmission').text(transmission);
-            modal.find('#modalCarTypeBody').text(typeBody);
-        });
-
-        $('#editCarButton').click(function() {
-            if (carID) {
-                window.location.href = 'dataСhangeCar.php?id=' + carID;
-            }
-        });
-    });
-</script>
-<script>
-  // Додаємо обробник події для кнопки редагування
-  document.getElementById('editCarButton').addEventListener('click', function() {
-    var carId = document.getElementById('modalCarIDCar').value; // Отримуємо ID автомобіля
-    window.location.href = '/edit-car/' + carId; // Перенаправляємо на сторінку редагування
-  });
-</script>
-<footer class="section novi-background footer-advanced bg-gray-700">
+ <footer class="section novi-background footer-advanced bg-gray-700">
         <div class="footer-advanced-main">
          
           </div>
