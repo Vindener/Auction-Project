@@ -110,6 +110,7 @@ session_destroy();
         <div class="col-md-6 wow-outer">
             <div class="form-wrap wow fadeSlideInUp">
                 <label class="form-label-outside" for="contact-password">Пароль</label>
+
                 <input class="form-input" id="contact-password" type="password" name="password" data-constraints="@Required">
             </div>
         </div>

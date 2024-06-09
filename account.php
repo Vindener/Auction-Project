@@ -70,9 +70,11 @@ $user = $stmt->fetch();
                     </li>
                     <li class="rd-nav-item"><a class="rd-nav-link" href="MainAuction.php">Аукціони</a>
                     </li>
+
                     <li class="rd-nav-item"><a class="rd-nav-link" href="autorization.php">Вихій</a>
                     </li>
                     <li class="rd-nav-item"><a class="rd-nav-link" href="AdminPanel.php">Адмінка</a>
+
                     </li>                  
                   </ul>
                 </div>

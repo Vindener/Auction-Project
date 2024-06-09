@@ -17773,3 +17773,17 @@ html[data-x-mode]:not(.lt-ie10) .not-animated {
 		display: none;
 	}
 }
+
+/* My styles */
+.warning-auction{
+	color: red;
+}
+.aution-container{
+	display: flex;
+	padding: 20px;
+	margin-left: 5%;
+}
+.bid-list{
+	padding: 20px;
+}
+

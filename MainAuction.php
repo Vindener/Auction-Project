@@ -6,6 +6,8 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "DBAutoAuk";
+=======
+include("./include/db_connect.php"); 
 
 // Перевірка, чи встановлено номер сторінки
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
@@ -15,6 +17,7 @@ $per_page = 20;
 
 // Обчислення початкового рядка для SQL LIMIT
 $start = ($page - 1) * $per_page;
+
 
 // Створення з'єднання
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -27,6 +30,11 @@ if ($conn->connect_error) {
 // SQL-запит для отримання даних для поточної сторінки
 $sql = "
 SELECT 
+=======
+// SQL-запит для отримання даних для поточної сторінки
+$sql = "
+SELECT 
+    a.IDAuction, 
     a.StartAuction, 
     a.EndAuction, 
     a.MinPrice, 
@@ -49,6 +57,12 @@ $result = $conn->query($sql);
 // SQL-запит для обчислення загальної кількості сторінок
 $total_pages_sql = "SELECT COUNT(*) FROM Auction";
 $result_total = $conn->query($total_pages_sql);
+=======
+$result = $mysqli->query($sql);
+
+// SQL-запит для обчислення загальної кількості сторінок
+$total_pages_sql = "SELECT COUNT(*) FROM Auction";
+$result_total = $mysqli->query($total_pages_sql);
 $total_rows = $result_total->fetch_array()[0];
 $total_pages = ceil($total_rows / $per_page);
 ?>
@@ -150,8 +164,8 @@ $total_pages = ceil($total_rows / $per_page);
                 while($row = $result->fetch_assoc()) {
                     echo '<div class="col-sm-6 col-lg-3">';
                     echo '  <article class="thumbnail-light">';
-                    echo '      <a class="thumbnail-light-media" href="#"><img class="thumbnail-light-image" src="'. $row["CarPhoto"] .'" alt="" style="max-width: 270px; max-height: 220px;"/></a>';
-                    echo '      <h4 class="thumbnail-light-title"><a href="#">'. $row["Brand"] .' '. $row["Model"] .'</a></h4>';
+                    echo '      <a class="thumbnail-light-media" href="Auction.php?IDAuction='.$row["IDAuction"] .'"><img class="thumbnail-light-image" src="'. $row["CarPhoto"] .'" alt="" style="max-width: 270px; max-height: 220px;"/></a>';
+                    echo '      <h4 class="thumbnail-light-title"><a href="Auction.php?IDAuction='.$row["IDAuction"] .'">'. $row["Brand"] .' '. $row["Model"] .'</a></h4>';
                     echo '      <p>Початок аукціону: '. $row["StartAuction"] .'</p>';
                     echo '      <p>Кінець аукціону: '. $row["EndAuction"] .'</p>';
                     echo '      <p>Мінімальна ставка: '. $row["MinPrice"] .'</p>';
