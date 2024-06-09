@@ -1,4 +1,3 @@
-
 <?php 
 session_start();
 
@@ -17,11 +16,14 @@ $per_page = 20;
 // Обчислення початкового рядка для SQL LIMIT
 $start = ($page - 1) * $per_page;
 
+// Фільтрація
+$filter_brand = isset($_GET['brand']) ? $_GET['brand'] : '';
+$filter_model = isset($_GET['model']) ? $_GET['model'] : '';
+$filter_start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
+$filter_end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
-// Створення з'єднання
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-// Перевірка з'єднання
 if ($conn->connect_error) {
     die("З'єднання не вдалося: " . $conn->connect_error);
 }
@@ -44,19 +46,56 @@ JOIN
     Brand b ON c.CarBrand = b.IDBrand
 JOIN 
     Model m ON c.CarModel = m.IDModel
-LIMIT $start, $per_page;
+WHERE 
+    1=1
 ";
+
+if ($filter_brand) {
+    $sql .= " AND b.Brand LIKE '%" . $conn->real_escape_string($filter_brand) . "%'";
+}
+
+if ($filter_model) {
+    $sql .= " AND m.Model LIKE '%" . $conn->real_escape_string($filter_model) . "%'";
+}
+
+if ($filter_start_date) {
+    $sql .= " AND a.StartAuction >= '" . $conn->real_escape_string($filter_start_date) . "'";
+}
+
+if ($filter_end_date) {
+    $sql .= " AND a.EndAuction <= '" . $conn->real_escape_string($filter_end_date) . "'";
+}
+
+$sql .= " LIMIT $start, $per_page";
 
 $result = $conn->query($sql);
 
-// SQL-запит для обчислення загальної кількості сторінок
-$total_pages_sql = "SELECT COUNT(*) FROM Auction";
-$result_total = $conn->query($total_pages_sql);
-$result = $mysqli->query($sql);
+$total_pages_sql = "
+SELECT COUNT(*) 
+FROM Auction a
+JOIN Car c ON a.AuctionIDCar = c.IDCar
+JOIN Brand b ON c.CarBrand = b.IDBrand
+JOIN Model m ON c.CarModel = m.IDModel
+WHERE 1=1
+";
 
-// SQL-запит для обчислення загальної кількості сторінок
-$total_pages_sql = "SELECT COUNT(*) FROM Auction";
-$result_total = $mysqli->query($total_pages_sql);
+if ($filter_brand) {
+    $total_pages_sql .= " AND b.Brand LIKE '%" . $conn->real_escape_string($filter_brand) . "%'";
+}
+
+if ($filter_model) {
+    $total_pages_sql .= " AND m.Model LIKE '%" . $conn->real_escape_string($filter_model) . "%'";
+}
+
+if ($filter_start_date) {
+    $total_pages_sql .= " AND a.StartAuction >= '" . $conn->real_escape_string($filter_start_date) . "'";
+}
+
+if ($filter_end_date) {
+    $total_pages_sql .= " AND a.EndAuction <= '" . $conn->real_escape_string($filter_end_date) . "'";
+}
+
+$result_total = $conn->query($total_pages_sql);
 $total_rows = $result_total->fetch_array()[0];
 $total_pages = ceil($total_rows / $per_page);
 ?>
@@ -148,7 +187,30 @@ $total_pages = ceil($total_rows / $per_page);
       <!-- Services-->
       <section class="section novi-background section-lg text-center">
     <div class="container">
+        <h3 class="text-uppercase">Пошук та фільтрація :</h3>
+        <form method="GET" action="">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="brand" placeholder="Марка автомобіля" value="<?php echo htmlspecialchars($filter_brand); ?>">
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="model" placeholder="Модель автомобіля" value="<?php echo htmlspecialchars($filter_model); ?>">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="start_date" placeholder="Дата початку" value="<?php echo htmlspecialchars($filter_start_date); ?>">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="end_date" placeholder="Дата завершення" value="<?php echo htmlspecialchars($filter_end_date); ?>">
+                </div>
+                <div class="col-md-12">
+                    <br>
+                    <button type="submit" class="btn btn-primary">Пошук</button>
+                    <br>
+                </div>
+            </div>
+        </form>
         <h3 class="text-uppercase">Хороші варіанти :</h3>
+        <br>
         <div class="row row-35 row-xxl-70 offset-top-2">
             <?php
             if ($result->num_rows > 0) {

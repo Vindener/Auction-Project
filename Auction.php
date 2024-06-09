@@ -37,7 +37,6 @@
         $currentDateTime = new DateTime();
         $endDateTime = new DateTime($auction['EndAuction']);
 
-        // Перевірка, чи аукціон завершений
         if ($currentDateTime > $endDateTime) {
             echo "<script>alert(\"Цей аукціон закінчився!\");
                             </script>";
@@ -46,7 +45,6 @@
                 echo "<script>alert(\"Ви не заповнили поля!\");
                             </script>";
             } else {
-                // Перевірка, що ставка більша за мінімальну ціну
                 if ($bidAmount <= $auction['MinPrice']) {
                     echo "<script>alert(\"Ваша ставка мала для участі!\");
                             </script>";
@@ -59,7 +57,7 @@
                             echo "<script>alert(\"Ваша ставка успішно додана!\");
                             </script>";
 
-                            // Оновлення MinPrice в таблиці auction на найбільшу ставку
+                            // Оновлення MinPrice
                             $updateQuery = "UPDATE auction SET MinPrice = (SELECT MAX(BidAmount) FROM bids WHERE AuctionID = ?) WHERE IDAuction = ?";
                             $updateStmt = $mysqli->prepare($updateQuery);
                             if ($updateStmt) {
@@ -79,7 +77,7 @@
         }
     }
 
-    // Отримання списку ставок
+    //Отримання списку всіх ставок
     $bidsQuery = "SELECT * FROM bids WHERE AuctionID = ? ORDER BY BidTime DESC";
     $bidsStmt = $mysqli->prepare($bidsQuery);
     $bidsStmt->bind_param("i", $auctionId);
@@ -91,7 +89,7 @@
     }
     $bidsStmt->close();
 
-    // Закриття з'єднання з базою даних
+    //Закриття з'єднання з базою даних
     $mysqli->close();
 ?>
 
@@ -188,7 +186,7 @@
         <?php if (isset($_SESSION['user_id'])) :?>
         <form id="bid-form" method="POST">
             <input type="hidden" id="auctionId" name="auctionId" value="<?php echo htmlspecialchars($auctionId); ?>">
-            <input type="hidden" id="clientId" name="clientId" value="1"> <!-- Example client ID -->
+            <input type="hidden" id="clientId" name="clientId" value="<?php echo htmlspecialchars($_SESSION['user_id']); ?>"> 
             <input type="number" id="bidAmount" name="bidAmount" placeholder="Ваша ставка" required>
             <button type="submit">Виставити ставку</button>
         </form>
@@ -207,7 +205,7 @@
         let checkAuctionInterval;
         let fetchBidsInterval;
 
-        // Check if auction is close to ending
+        // Перевірка на кінець та наближення кінця аукціона
         function checkAuctionEnd() {
             const now = new Date().getTime();
             const timeLeft = endAuction - now;
@@ -228,7 +226,7 @@
 
         checkAuctionInterval = setInterval(checkAuctionEnd, 1000);
 
-        // Fetch bids (AJAX)
+        //AJAX код
         function fetchBids() {
             fetch(`<?php echo $_SERVER['PHP_SELF']; ?>?IDAuction=${auctionId}`)
                 .then(response => response.text())
@@ -243,9 +241,8 @@
                 });
         }
 
-        fetchBidsInterval = setInterval(fetchBids, 5000); // Refresh bids every 5 seconds
+        fetchBidsInterval = setInterval(fetchBids, 5000); // Оновлення сторінки кожні 5 секунд
 
-        // Place bid
         document.getElementById('bid-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
