@@ -108,7 +108,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
               } else{
                   echo '<td></td>';
               }
-                    echo '<td><a class="admin-links" href="..\auto.php?id=' . $row['IDCar'] . '">Перегляд</a></td>
+                    echo '<td><a class="admin-links" href="car\view.php?id=' . $row['IDCar'] . '">Перегляд</a></td>
                     <td><a class="admin-links" href="auto\edit_auto.php?id=' . $row['IDCar'] . '">Оновити</a></td>
                     <td><a class="admin-links" href="car\delete.php?id=' . $row['IDCar'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
                     </tr>
