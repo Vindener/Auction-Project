@@ -6,11 +6,12 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
 }else{
     include("../../include/db_connect.php");
 
-    $id = $_GET['id'];
-  $sel = mysqli_query($mysqli, "SELECT * FROM Brand
-    WHERE `IDBrand` = '$id'");
-  $row = mysqli_fetch_assoc($sel);
-  mysqli_close($mysqli);
+
+    if (isset($_POST['submit_input'])) {
+      $sel = mysqli_query($mysqli, "INSERT INTO `Brand`(`Brand`) VALUES ('".$_POST['Brand']."')");
+        mysqli_close($mysqli);
+        header("Location: ../brands.php"); 
+    }
 }
 ?>
 
@@ -60,15 +61,13 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
   </nav>
 
   <div>
-    <h1 class="title">Редагування бренду</h1>
+    <h1 class="title">Створення бренду</h1>
       <hr>
-      <form class="form-auto" action="update.php" method="post">
-        <p>№ бренда</p>
-        <input type="text" name="IDBrand" value="<?= $row['IDBrand'] ?>" disabled>
+      <form class="form-auto" action="" method="post">
         <p>Назва бренду</p>
-        <input type="text" name="Brand" value="<?= $row['Brand'] ?>" >
+        <input type="text" name="Brand" value="" >
         <br><br>
-        <button type="submit" class="user_button" style="cursor:pointer;">Внести зміни</button>
+        <button type="submit" name="submit_input" class="user_button" style="cursor:pointer;">Створити</button>
       </form>
     </div>
 

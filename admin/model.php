@@ -62,6 +62,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
   </nav>
 
   <div class="spisok-table">
+    <a href="model\add.php">Створити запис</a>
     <table class="admin_table">
       <tr>
         <th width="25px">№ моделі</th>

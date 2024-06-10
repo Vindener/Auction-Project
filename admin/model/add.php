@@ -6,11 +6,21 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
 }else{
     include("../../include/db_connect.php");
 
-    $id = $_GET['id'];
-  $sel = mysqli_query($mysqli, "SELECT * FROM Brand
-    WHERE `IDBrand` = '$id'");
-  $row = mysqli_fetch_assoc($sel);
-  mysqli_close($mysqli);
+    $sql = "SELECT IDBrand, Brand FROM Brand";
+    $result = $mysqli->query($sql);
+    
+    $brands = [];
+    if ($result->num_rows > 0) {
+        while($row = $result->fetch_assoc()) {
+            $brands[] = $row;
+        }
+    }
+
+    if (isset($_POST['submit_input'])) {
+      $sel = mysqli_query($mysqli, "INSERT INTO `Model`(`IDBrand`, `Model`) VALUES ('".$_POST['BrandID']."','".$_POST['Model']."')");
+        mysqli_close($mysqli);
+        header("Location: ../model.php"); 
+    }
 }
 ?>
 
@@ -60,15 +70,20 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
   </nav>
 
   <div>
-    <h1 class="title">Редагування бренду</h1>
+    <h1 class="title">Створення моделі</h1>
       <hr>
-      <form class="form-auto" action="update.php" method="post">
-        <p>№ бренда</p>
-        <input type="text" name="IDBrand" value="<?= $row['IDBrand'] ?>" disabled>
-        <p>Назва бренду</p>
-        <input type="text" name="Brand" value="<?= $row['Brand'] ?>" >
+      <form class="form-auto" action="" method="post">
+        <p>Назва моделі</p>
+        <input type="text" name="Model" required >
+        <p>№ бренда та назва</p>
+        <select id="BrandID" name="BrandID" required>
+            <option value="">Виберіть бренд</option>
+            <?php foreach ($brands as $brand): ?>
+                <option value="<?php echo $brand['IDBrand']; ?>"><?php echo $brand['Brand']; ?></option>
+            <?php endforeach; ?>
+        </select>
         <br><br>
-        <button type="submit" class="user_button" style="cursor:pointer;">Внести зміни</button>
+        <button type="submit" name="submit_input" class="user_button" style="cursor:pointer;">Повернутися на головну сторінку</button>
       </form>
     </div>
 
