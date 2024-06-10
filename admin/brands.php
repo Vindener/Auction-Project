@@ -77,9 +77,9 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
                     <tr>
                     <td>' . $row['IDBrand'] . '</td>
                     <td>' . $row['Brand'] . '</td>
-                    <td><a class="admin-links" href="..\auto.php?id=' . $row['id_spisok'] . '">Перегляд</a></td>
-                    <td><a class="admin-links" href="auto\edit_auto.php?id_spisok=' . $row['id_spisok'] . '">Оновити</a></td>
-                    <td><a class="admin-links" href="auto\vendor\delete_auto.php?id_spisok=' . $row['id_spisok'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
+                    <td><a class="admin-links" href="..\auto.php?id=' . $row['IDBrand'] . '">Перегляд</a></td>
+                    <td><a class="admin-links" href="auto\edit_auto.php?id=' . $row['IDBrand'] . '">Оновити</a></td>
+                    <td><a class="admin-links" href="brand\delete.php?id=' . $row['IDBrand'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
                     </tr>
                     ';
       } while ($row = mysqli_fetch_assoc($sel));
@@ -87,6 +87,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     </table>
   </div>
 
+  <script src="js/delete.js"></script>
 </body>
 
 </html>

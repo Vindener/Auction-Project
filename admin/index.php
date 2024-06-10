@@ -115,9 +115,9 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
                 }else{
                     echo '<td> Активне </td>';
                 }
-                    echo '<td><a class="admin-links" href="..\auto.php?id=' . $row['id_spisok'] . '">Перегляд</a></td>
-                    <td><a class="admin-links" href="auto\edit_auto.php?id_spisok=' . $row['id_spisok'] . '">Оновити</a></td>
-                    <td><a class="admin-links" href="auto\vendor\delete_auto.php?id_spisok=' . $row['id_spisok'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
+                    echo '<td><a class="admin-links" href="..\auto.php?id=' . $row['IDAuction'] . '">Перегляд</a></td>
+                    <td><a class="admin-links" href="auto\edit_auto.php?id=' . $row['IDAuction'] . '">Оновити</a></td>
+                    <td><a class="admin-links" href="auction\delete.php?id=' . $row['IDAuction'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
                     </tr>
                     ';
       } while ($row = mysqli_fetch_assoc($sel));
@@ -125,6 +125,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     </table>
   </div>
 
+  <script src="js/delete.js"></script>
 </body>
 
 </html>

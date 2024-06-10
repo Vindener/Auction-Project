@@ -80,9 +80,9 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
                     <td>' . $row['IDModel'] . '</td>
                     <td>' . $row['IDBrand'] . ' ' . $row['Brand'] . '</td>
                     <td>' . $row['Model'] . '</td>
-                    <td><a class="admin-links" href="..\auto.php?id=' . $row['id_spisok'] . '">Перегляд</a></td>
-                    <td><a class="admin-links" href="auto\edit_auto.php?id_spisok=' . $row['id_spisok'] . '">Оновити</a></td>
-                    <td><a class="admin-links" href="auto\vendor\delete_auto.php?id_spisok=' . $row['id_spisok'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
+                    <td><a class="admin-links" href="..\auto.php?id=' . $row['IDModel'] . '">Перегляд</a></td>
+                    <td><a class="admin-links" href="auto\edit_auto.php?id=' . $row['IDModel'] . '">Оновити</a></td>
+                    <td><a class="admin-links" href="model\delete.php?id=' . $row['IDModel'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
                     </tr>
                     ';
       } while ($row = mysqli_fetch_assoc($sel));
@@ -90,6 +90,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     </table>
   </div>
 
+  <script src="js/delete.js"></script>
 </body>
 
 </html>
