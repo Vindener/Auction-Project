@@ -1,12 +1,21 @@
 <?php
-require_once '../../include/db_connect.php';
+include("../../include/db_connect.php");
 
-$id = $_POST["IDBrand"];
-$Brand = $_POST["Brand"];
+    $id = $_POST["IDBrand"];
+    $Brand = $_POST["Brand"];
 
-mysqli_query($mysqli, "UPDATE Brand SET
-            Brand='" . $Brand . "'
-            WHERE Brand.IDBrand   = " . $id . " ");
+    $sql = "UPDATE brand SET Brand = ? WHERE IDBrand = ?";
+    if ($stmt = $mysqli->prepare($sql)) {
+        $stmt->bind_param("si", $Brand, $id);
 
-header('Location: ../brands.php');
+        if ($stmt->execute()) {
+            $mysqli->close();
+            header('Location: ../brands.php');
+        }
+
+        $stmt->close();
+    } 
+
+
+    $mysqli->close();
 ?>

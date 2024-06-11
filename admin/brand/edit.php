@@ -63,16 +63,15 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     <h1 class="title">Редагування бренду</h1>
       <hr>
       <form class="form-auto" action="update.php" method="post">
-        <p>№ бренда</p>
-        <input type="text" name="IDBrand" value="<?= $row['IDBrand'] ?>" disabled>
+        <p>№ бренда - <?=$row['IDBrand'] ?></p>
+        <input type="text" name="IDBrand" value="<?= $row['IDBrand'] ?>" readonly hidden>
         <p>Назва бренду</p>
         <input type="text" name="Brand" value="<?= $row['Brand'] ?>" >
         <br><br>
-        <button type="submit" class="user_button" style="cursor:pointer;">Внести зміни</button>
+        <button type="submit" name="submit" class="user_button" style="cursor:pointer;">Внести зміни</button>
       </form>
     </div>
 
-  <script src="js/delete.js"></script>
 </body>
 
 </html>

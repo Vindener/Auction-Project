@@ -88,7 +88,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
                     <td>' . $row['ClientEmile'] . '</td>
                     <td>' . $row['CPhone'] . '</td>';
                     echo '<td><a class="admin-links" href="user\view.php?id=' . $row['IDClient'] . '">Перегляд</a></td>
-                    <td><a class="admin-links" href="auto\edit_auto.php?id_spisok=' . $row['IDClient'] . '">Оновити</a></td>
+                    <td><a class="admin-links" href="user\edit.php?id=' . $row['IDClient'] . '">Оновити</a></td>
                     <td><a class="admin-links" href="user\delete.php?id=' . $row['IDClient'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
                     </tr>
                     ';

@@ -82,7 +82,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
                     <td>' . $row['IDBrand'] . ' ' . $row['Brand'] . '</td>
                     <td>' . $row['Model'] . '</td>
                     <td><a class="admin-links" href="model\view.php?id=' . $row['IDModel'] . '">Перегляд</a></td>
-                    <td><a class="admin-links" href="auto\edit_auto.php?id=' . $row['IDModel'] . '">Оновити</a></td>
+                    <td><a class="admin-links" href="model\edit.php?id=' . $row['IDModel'] . '">Оновити</a></td>
                     <td><a class="admin-links" href="model\delete.php?id=' . $row['IDModel'] . '" onclick="return ConfirmDelete()">Видалити</a></td>
                     </tr>
                     ';

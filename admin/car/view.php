@@ -22,7 +22,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
 <html lang="en">
 
 <head>
-  <title>Панель адміністрування  - аукціон</title>
+  <title>Панель адміністрування  - машини</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" />
