@@ -98,7 +98,7 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     <h1 class="title">Редагування машини</h1>
       <hr>
       <form class="form-auto" action="update.php" method="post">
-        <p>№ машини</p>
+        <p>№ машини - <?=$row["IDCar"] ?></p>
         <input type="text" name="IDCar" value="<?= $row['IDCar'] ?>" readonly hidden>
         <?php 
             if ($row["CarPhoto"] != ''||$row["CarPhoto"] != null) {
@@ -136,11 +136,11 @@ if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
         <br>
         <input type="checkbox" name="Сhanged" <?php if($row['Сhanged']==0){ echo 'checked';} ?>>Чи був в ДТП?</input>
         <p>Пробіг</p>
-        <input type="text" name="Probig" value="<?= $row['Probig'] ?>" >
+        <input type="number" name="Probig" value="<?= $row['Probig'] ?>" >
         <p>Опис</p>
         <textarea name="Description" ><?= $row['Description'] ?></textarea>
         <p>Об'єм двигуна</p>
-        <input type="text" name="EngineСapacity" value="<?= $row['EngineСapacity'] ?>" >
+        <input type="number" name="EngineСapacity" value="<?= $row['EngineСapacity'] ?>" >
         <p>Витрати палива</p>
         <input type="text" name="FuelCosts" value="<?= $row['FuelCosts'] ?>" >
         <p>Привід</p>
